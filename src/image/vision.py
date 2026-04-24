@@ -15,6 +15,7 @@ def find_and_click(image_file, name, confidence=0.75, region=None, log=None, dou
             log(f"[!] Could not load {image_file}")
         return False
 
+    th, tw = template.shape[:2]
     click_mode = getattr(state, "CLICK_MODE", "background")
     target_hwnd = getattr(state, "TARGET_HWND", None)
 
@@ -35,11 +36,17 @@ def find_and_click(image_file, name, confidence=0.75, region=None, log=None, dou
             return False
 
         screenshot_bgr, win_w, win_h = result
+
+        # Guard: template must fit inside the captured window
+        if th > screenshot_bgr.shape[0] or tw > screenshot_bgr.shape[1]:
+            if log:
+                log(f"[!] Template {name} ({tw}x{th}) is larger than window ({win_w}x{win_h}). Skip or resize the image.")
+            return False
+
         match = cv2.matchTemplate(screenshot_bgr, template, cv2.TM_CCOEFF_NORMED)
         _, max_val, _, max_loc = cv2.minMaxLoc(match)
 
         if max_val >= confidence:
-            th, tw = template.shape[:2]
             # Coordinates are relative to the window's client area
             client_x = max_loc[0] + tw // 2
             client_y = max_loc[1] + th // 2
@@ -68,13 +75,18 @@ def find_and_click(image_file, name, confidence=0.75, region=None, log=None, dou
         screenshot = np.array(sct.grab(monitor))
         screenshot_bgr = cv2.cvtColor(screenshot, cv2.COLOR_BGRA2BGR)
 
+    # Guard: template must fit inside the screenshot/region
+    if th > screenshot_bgr.shape[0] or tw > screenshot_bgr.shape[1]:
+        if log:
+            log(f"[!] Template {name} ({tw}x{th}) is larger than the search area ({screenshot_bgr.shape[1]}x{screenshot_bgr.shape[0]}). Skip or resize the image.")
+        return False
+
     result = cv2.matchTemplate(screenshot_bgr, template, cv2.TM_CCOEFF_NORMED)
     _, max_val, _, max_loc = cv2.minMaxLoc(result)
 
     if max_val >= confidence:
-        h, w = template.shape[:2]
-        center_x = max_loc[0] + w // 2 + (region[0] if region else 0)
-        center_y = max_loc[1] + h // 2 + (region[1] if region else 0)
+        center_x = max_loc[0] + tw // 2 + (region[0] if region else 0)
+        center_y = max_loc[1] + th // 2 + (region[1] if region else 0)
 
         if click_mode == "background":
             success = background_click(center_x, center_y, double_click=double_click)

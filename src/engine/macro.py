@@ -28,6 +28,12 @@ def run_macro(stop_event, log, screen_ratio, scan_side):
         from src.engine.background_click import get_window_title
         win_title = get_window_title(state.TARGET_HWND) or "(unknown)"
         log(f"[i] Target window: {win_title} (HWND {state.TARGET_HWND})")
+        # In window mode we capture the full target window — scan region is irrelevant
+        search_region = None
+        search_label = f"window: {win_title}"
+    elif getattr(state, 'CLICK_MODE', 'background') == "window" and not state.TARGET_HWND:
+        # Window mode selected but no target window resolved — will fail each step
+        log("[!] Window mode selected but no target window found. Images will not match.")
 
     if not state.MACRO_SEQUENCE:
         log("[!] Macro sequence is empty. Please add images first.")
