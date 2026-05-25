@@ -317,9 +317,7 @@ class MacroApp:
                                 highlightthickness=0)
         gear_canvas.pack(side=tk.LEFT, padx=(0, 8))
         gc = self.PRIMARY
-        # Gear circle + teeth
-        # Draw a proper gear icon with 8 teeth
-        gc = self.PRIMARY
+        # Gear icon: proper 8-tooth radial pattern
         gear_canvas.create_oval(4, 4, 16, 16, outline=gc, width=1.5)
         gear_canvas.create_oval(8, 8, 12, 12, outline=gc, width=1.5)
         # 8 teeth at 45° increments
@@ -533,7 +531,7 @@ class MacroApp:
 
         # Ghost clear button
         clear_btn = tk.Button(log_header, text="Clear",
-                               font=("Segoe UI Variable", 9),
+                               font=("Segoe UI Variable", 10),
                                fg=self.TEXT_DIM, bg=self.CARD, bd=0,
                                activebackground=self.CARD,
                                activeforeground=self.ERROR,
@@ -638,9 +636,9 @@ class MacroApp:
         notes = tk.Frame(view, bg=self.BG)
         notes.pack(fill=tk.X, pady=(6, 12))
         tk.Label(notes, text="• Setting Wait to 0.0 forces infinite search until next image is found.",
-                 font=("Segoe UI Variable", 9), bg=self.BG, fg=self.TEXT_DIM).pack(anchor="w")
+                 font=("Segoe UI Variable", 10), bg=self.BG, fg=self.TEXT_DIM).pack(anchor="w")
         tk.Label(notes, text="• Skip Next skips the next image if the selected one is not found.",
-                 font=("Segoe UI Variable", 9), bg=self.BG, fg=self.TEXT_DIM).pack(anchor="w")
+                 font=("Segoe UI Variable", 10), bg=self.BG, fg=self.TEXT_DIM).pack(anchor="w")
 
         # Divider
         tk.Frame(view, bg=self.BORDER_SUBTLE, height=1).pack(fill=tk.X, pady=(0, 8))
@@ -1058,7 +1056,7 @@ class MacroApp:
                 detail_text = f"{pimg.width}×{pimg.height}  ·  {fsize_str}"
             except Exception:
                 detail_text = "Error"
-        tk.Label(info, text=detail_text, font=("Segoe UI Variable", 9),
+        tk.Label(info, text=detail_text, font=("Segoe UI Variable", 10),
                  bg=self.CARD, fg=self.TEXT_DIM, anchor="w").pack(fill=tk.X, pady=(2, 0))
 
         # ── Hover behavior (orange border glow) ──
